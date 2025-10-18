@@ -1,0 +1,5 @@
+2025/10/18 10:57:17 [alert] 27724#23076: worker process 27492 exited with code C0000142
+2025/10/18 10:57:17 [alert] 27724#23076: could not respawn worker
+2025/10/18 16:51:33 [emerg] 14128#21464: "proxy_pass" directive is duplicate in C:\Users\17926\Desktop\java-agent\frontend/conf/nginx.conf:43
+2025/10/18 17:00:57 [emerg] 11896#9848: "proxy_pass" directive is duplicate in C:\Users\17926\Desktop\java-agent\frontend/conf/nginx.conf:43
+2025/10/18 18:26:56 [emerg] 2812#27756: "proxy_pass" directive is duplicate in C:\Users\17926\Desktop\java-agent\frontend/conf/nginx.conf:44
