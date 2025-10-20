@@ -63,7 +63,7 @@ public class CommonConfig {
     }
 
     //构建向量数据库操作对象
-    //@Bean
+    @Bean
     public EmbeddingStore store(){//embeddingStore的对象, 这个对象的名字不能重复,所以这里使用store
         List<Document> documents = ClassPathDocumentLoader.loadDocuments("content");
 

@@ -2,7 +2,7 @@ server:
   port: 8081
 spring:
   application:
-    name: yjshz
+    name: yjshz-core
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
     url: jdbc:mysql://127.0.0.1:3306/redis_project?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
@@ -11,7 +11,6 @@ spring:
   redis:
     host: 127.0.0.1
     port: 6379
-    password: 15915255868
     timeout: 5s
     lettuce:
       pool:
@@ -21,6 +20,12 @@ spring:
         time-between-eviction-runs: 10s
   jackson:
     default-property-inclusion: non_null # JSON处理时忽略非空字段
+  # AI服务配置
+ai:
+  consultant:
+    url: http://localhost:8084
+
+
 mybatis-plus:
   type-aliases-package: com.yjshz.entity # 别名扫描包
 logging:

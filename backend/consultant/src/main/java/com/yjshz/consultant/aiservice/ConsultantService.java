@@ -21,7 +21,5 @@ import reactor.core.publisher.Flux;
 //@AiService
 public interface ConsultantService {
     @SystemMessage(fromResource = "system.txt")
-    //@UserMessage("你是东哥的助手小月月,人美心善又多金!{{it}}")
-    //@UserMessage("你是东哥的助手小月月,人美心善又多金!{{msg}}")
     public Flux<String> chat(/*@V("msg")*/@MemoryId String memoryId, @UserMessage String message);
 }

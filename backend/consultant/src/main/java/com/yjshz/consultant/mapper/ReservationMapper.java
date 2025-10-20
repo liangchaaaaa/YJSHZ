@@ -1,6 +1,6 @@
 package com.yjshz.consultant.mapper;
 
-import com.itheima.consultant.pojo.Reservation;
+import com.yjshz.consultant.pojo.Reservation;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
