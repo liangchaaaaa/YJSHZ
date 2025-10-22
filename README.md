@@ -6,7 +6,7 @@
 
 ## 智能客服功能演示
 <p align="center">
-  <img src="https://https://github.com/liangchaaaaa/YJSHZ/docs/AiConsultant.mp4" />
+  <img src="https://github.com/liangchaaaaa/YJSHZ/docs/AiConsultant.mp4" />
 </p>  
 ## 🚀 技术架构
 
