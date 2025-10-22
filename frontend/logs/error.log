@@ -22,3 +22,5 @@
 2025/10/20 20:26:39 [error] 3196#25220: *592 CreateFile() "C:\Users\17926\Desktop\java-agent\YJSHZ\frontend/html/yjshz/js/axios.min.map" failed (2: The system cannot find the file specified), client: 127.0.0.1, server: localhost, request: "GET /js/axios.min.map HTTP/1.1", host: "localhost:8083"
 2025/10/20 20:26:41 [error] 3196#25220: *592 CreateFile() "C:\Users\17926\Desktop\java-agent\YJSHZ\frontend/html/yjshz/js/axios.min.map" failed (2: The system cannot find the file specified), client: 127.0.0.1, server: localhost, request: "GET /js/axios.min.map HTTP/1.1", host: "localhost:8083"
 2025/10/20 20:27:30 [error] 3196#25220: *592 CreateFile() "C:\Users\17926\Desktop\java-agent\YJSHZ\frontend/html/yjshz/js/axios.min.map" failed (2: The system cannot find the file specified), client: 127.0.0.1, server: localhost, request: "GET /js/axios.min.map HTTP/1.1", host: "localhost:8083"
+2025/10/20 20:53:00 [alert] 8056#17920: worker process 3412 exited with code C0000142
+2025/10/20 20:53:00 [alert] 8056#17920: could not respawn worker

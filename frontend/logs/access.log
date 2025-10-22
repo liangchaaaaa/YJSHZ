@@ -1562,3 +1562,4 @@
 127.0.0.1 - - [20/Oct/2025:20:27:30 +0800] "GET /imgs/blogs/blog1.jpg HTTP/1.1" 200 65123 "http://localhost:8083/blog-detail.html?id=7" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:144.0) Gecko/20100101 Firefox/144.0"
 127.0.0.1 - - [20/Oct/2025:20:27:30 +0800] "GET /api/follow/or/not/1 HTTP/1.1" 404 115 "http://localhost:8083/blog-detail.html?id=7" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:144.0) Gecko/20100101 Firefox/144.0"
 127.0.0.1 - - [20/Oct/2025:20:27:30 +0800] "GET /js/axios.min.map HTTP/1.1" 404 153 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:144.0) Gecko/20100101 Firefox/144.0"
+127.0.0.1 - - [20/Oct/2025:20:50:17 +0800] "PUT /api/follow/1/true HTTP/1.1" 404 113 "http://localhost:8083/blog-detail.html?id=7" "Mozilla/5.0 (Linux; Android 11; SAMSUNG SM-G973U) AppleWebKit/537.36 (KHTML, like Gecko) SamsungBrowser/14.2 Chrome/87.0.4280.141 Mobile Safari/537.36"
