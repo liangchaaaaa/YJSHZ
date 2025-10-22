@@ -5,9 +5,8 @@
 雅鉴生活志是一个集本地生活服务、社交分享和AI智能咨询于一体的综合性平台。项目采用前后端分离架构，结合现代Web技术和人工智能能力，为用户提供优质的本地生活体验。
 
 ## 智能客服功能演示
-<p align="center">
-  <img src="https://github.com/liangchaaaaa/YJSHZ/docs/AiConsultant.gif" />
-</p>  
+<img src="https://github.com/liangchaaaaa/YJSHZ/docs/AiConsultant.gif" />
+
 ## 🚀 技术架构
 
 ### 前端架构
