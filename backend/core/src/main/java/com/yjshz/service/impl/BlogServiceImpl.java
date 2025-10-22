@@ -1,36 +1,33 @@
 package com.yjshz.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.core.util.BooleanUtil;
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.sun.org.apache.bcel.internal.generic.NEW;
 import com.yjshz.dto.Result;
+import com.yjshz.dto.ScrollResult;
 import com.yjshz.dto.UserDTO;
 import com.yjshz.entity.Blog;
+import com.yjshz.entity.Follow;
 import com.yjshz.entity.User;
 import com.yjshz.mapper.BlogMapper;
 import com.yjshz.service.IBlogService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.yjshz.service.IFollowService;
 import com.yjshz.service.IUserService;
 import com.yjshz.utils.RedisConstants;
 import com.yjshz.utils.SystemConstants;
 import com.yjshz.utils.UserHolder;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.dao.DataAccessException;
-import org.springframework.data.redis.core.RedisOperations;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.SessionCallback;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.lang.reflect.Array;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 
@@ -39,6 +36,9 @@ public class BlogServiceImpl extends ServiceImpl<BlogMapper, Blog> implements IB
 
     @Resource
     private IUserService userService;
+
+    @Resource
+    private IFollowService followService;
 
     @Resource
     private StringRedisTemplate stringRedisTemplate;
@@ -51,6 +51,10 @@ public class BlogServiceImpl extends ServiceImpl<BlogMapper, Blog> implements IB
         LIKE_SCRIPT.setResultType(Long.class);
     }
 
+    /**
+     * 查询博客的发布者信息
+     * @param blog
+     */
     private void queryBlogUser(Blog blog) {
         Long userId = blog.getUserId();
         User user = userService.getById(userId);
@@ -149,4 +153,83 @@ public class BlogServiceImpl extends ServiceImpl<BlogMapper, Blog> implements IB
                 .collect(Collectors.toList());
         return Result.ok(userDTOS);
     }
+
+    /**
+     * 发布笔记后推送到粉丝的信箱中
+     * @param blog
+     * @return blogId
+     */
+    @Override
+    public Result saveBlog(Blog blog){
+        UserDTO user = UserHolder.getUser();
+        blog.setUserId(user.getId());
+        boolean isSuccess = save(blog);
+        if(!isSuccess){
+            return Result.fail("新增笔记失败");
+        }
+        List<Follow> follows = followService.query().eq("follow_user_id", user.getId()).list();
+        List<Long> followUserIds = follows.stream()
+                .map(Follow::getFollowUserId)
+                .collect(Collectors.toList());
+
+        for(Long followIds:followUserIds){
+            String key = RedisConstants.FEED_KEY + followIds;
+            stringRedisTemplate.opsForZSet().add(key,blog.getId().toString(),System.currentTimeMillis());
+
+        }
+        return Result.ok(blog.getId());
+    }
+
+    /**
+     * 查询关注列表推送的博客：收集信箱中的笔记，做滚动分页
+     * @param max
+     * @param offset
+     * @return
+     */
+    @Override
+    public Result queryBlogOfFollow(Long max, Integer offset) {
+        String key = RedisConstants.FEED_KEY + UserHolder.getUser().getId();
+        //zrevRangeByScore key max min limit offset count
+        Set<ZSetOperations.TypedTuple<String>> typedTuples = stringRedisTemplate.opsForZSet()
+                .reverseRangeByScoreWithScores(key, 0, max, offset, 2);
+        if(typedTuples == null || typedTuples.isEmpty()){
+            return Result.ok();
+        }
+
+        // 3、解析数据：blogId、 score(minTime)时间戳  offset:本次查询的最小值一样的元素个数,  作为下次查询的参数传递进啦
+        List<Long> blogIds = new ArrayList<>(typedTuples.size());
+        long minTime = 0;
+        int os = 1;
+        // typedTuples 本身是降序的  最后一个的score即时间戳一定是最小的
+        for (ZSetOperations.TypedTuple<String> tuple : typedTuples) {
+            // 3.1获取笔记ID
+            blogIds.add(Long.valueOf(tuple.getValue()));
+            // 3.2获取分数(时间戳)
+            long scoreTime = tuple.getScore().longValue();
+            // 3.3判断偏移量：本次查询最小的score时间戳 相同的有几个
+            if (minTime == scoreTime) {
+                os++;
+            } else {
+                minTime = scoreTime;
+                os = 1;
+            }
+        }
+        // 4、根据id查询blog
+        String blogIdStr = StrUtil.join(",", blogIds);//把blogIds拼接成字符串
+        List<Blog> blogs = query().in("id", blogIds).last("ORDER BY FIELD(id," + blogIdStr + ")").list();
+        // 这里由于 查看笔记时 可以看到整个笔记对应发布者的用户信息  所以Blog实体类里面有用户的 icon、name
+        // 并且由于笔记也可以查看自己有没有点赞,所以blog实体类的isliked属性也需要赋值
+        for(Blog blog:blogs){
+            queryBlogUser(blog);
+            isBlogLiked(blog);
+        }
+        // 5、封装并返回
+        ScrollResult scrollResult = new ScrollResult();
+        scrollResult.setList(blogs);        //笔记集合
+        scrollResult.setOffset(os);         //下一次查询所要传递的偏移量参数
+        scrollResult.setMinTime(minTime);   //本次查询的最小时间戳，下次查询的参数(最大时间戳)
+
+        return Result.ok(scrollResult);
+    }
+
 }

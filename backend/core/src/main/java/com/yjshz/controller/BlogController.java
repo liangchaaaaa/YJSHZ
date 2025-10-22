@@ -28,7 +28,7 @@ public class BlogController {
         UserDTO user = UserHolder.getUser();
         blog.setUserId(user.getId());
         // 保存探店博文
-        blogService.save(blog);
+        blogService.saveBlog(blog);
         // 返回id
         return Result.ok(blog.getId());
     }
@@ -50,6 +50,14 @@ public class BlogController {
         // 获取当前页数据
         List<Blog> records = page.getRecords();
         return Result.ok(records);
+    }
+
+    @GetMapping("/of/follow")
+    public Result queryBlogofFollow(@RequestParam("lastId")Long max,
+                                    @RequestParam(value = "offset",defaultValue = "0")Integer offset){
+        // 上一次查询的 最小时间戳  即本次查询的最大时间戳
+        // 第一次来查询的偏移量为 0
+        return blogService.queryBlogOfFollow(max,offset);
     }
 
     @GetMapping("/hot")
